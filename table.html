@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <title>Táblázat</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { cursor: pointer; background-color: #f2f2f2; }
+    input[type="text"] { width: 100%; box-sizing: border-box; }
+    .form-control { margin-bottom: 10px; }
+    .error { color: red; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h2>Táblázat</h2>
+
+  <div>
+    <div class="form-control">
+      <label>Név: <input type="text" id="name" required /></label>
+      <div id="error-name" class="error"></div>
+    </div>
+    <div class="form-control">
+      <label>Kor: <input type="text" id="age" required /></label>
+      <div id="error-age" class="error"></div>
+    </div>
+    <div class="form-control">
+      <label>Város: <input type="text" id="city" required /></label>
+      <div id="error-city" class="error"></div>
+    </div>
+    <div class="form-control">
+      <label>Email: <input type="text" id="email" required /></label>
+      <div id="error-email" class="error"></div>
+    </div>
+    <button onclick="addRow()">Hozzáadás</button>
+  </div>
+
+  <div>
+    <h4>Keresés:</h4>
+    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Keresés a táblázatban..." />
+  </div>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Név</th>
+        <th onclick="sortTable(1)">Kor</th>
+        <th onclick="sortTable(2)">Város</th>
+        <th onclick="sortTable(3)">Email</th>
+        <th>Műveletek</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    function validateInputs(name, age, city, email) {
+      let isValid = true;
+      document.querySelectorAll('.error').forEach(el => el.textContent = '');
+
+      if (!name || name.length < 2 || name.length > 20) {
+        document.getElementById('error-name').textContent = 'Név 2-20 karakter között!';
+        isValid = false;
+      }
+      if (!age || isNaN(age) || age < 1 || age > 120) {
+        document.getElementById('error-age').textContent = 'Adj meg valós kort (1-120)!';
+        isValid = false;
+      }
+      if (!city || city.length < 2) {
+        document.getElementById('error-city').textContent = 'Város megadása kötelező!';
+        isValid = false;
+      }
+      if (!email.includes('@') || email.length < 5) {
+        document.getElementById('error-email').textContent = 'Adj meg valós email címet!';
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    function addRow() {
+      const name = document.getElementById('name').value.trim();
+      const age = document.getElementById('age').value.trim();
+      const city = document.getElementById('city').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!validateInputs(name, age, city, email)) return;
+
+      const table = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+      const newRow = table.insertRow();
+
+      newRow.insertCell(0).innerText = name;
+      newRow.insertCell(1).innerText = age;
+      newRow.insertCell(2).innerText = city;
+      newRow.insertCell(3).innerText = email;
+      const actionsCell = newRow.insertCell(4);
+      actionsCell.innerHTML = `<button onclick="editRow(this)">✏️</button> 
+                               <button onclick="deleteRow(this)">🗑️</button>`;
+
+      
+      ['name', 'age', 'city', 'email'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function deleteRow(btn) {
+      const row = btn.closest('tr');
+      row.remove();
+    }
+
+    function editRow(btn) {
+      const row = btn.closest('tr');
+      const cells = row.querySelectorAll('td');
+
+      const name = prompt('Új név:', cells[0].innerText);
+      const age = prompt('Új kor:', cells[1].innerText);
+      const city = prompt('Új város:', cells[2].innerText);
+      const email = prompt('Új email:', cells[3].innerText);
+
+      if (!validateInputs(name, age, city, email)) return;
+
+      cells[0].innerText = name;
+      cells[1].innerText = age;
+      cells[2].innerText = city;
+      cells[3].innerText = email;
+    }
+
+    function sortTable(colIndex) {
+      const table = document.getElementById("dataTable");
+      const tbody = table.tBodies[0];
+      const rows = Array.from(tbody.rows);
+
+      const isAsc = table.getAttribute("data-sort-dir") !== "asc";
+      table.setAttribute("data-sort-dir", isAsc ? "asc" : "desc");
+
+      rows.sort((a, b) => {
+        const cellA = a.cells[colIndex].innerText.toLowerCase();
+        const cellB = b.cells[colIndex].innerText.toLowerCase();
+        return isAsc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+      });
+
+      rows.forEach(row => tbody.appendChild(row));
+    }
+
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.getElementById("dataTable").getElementsByTagName("tbody")[0].rows;
+
+      for (let row of rows) {
+        const text = Array.from(row.cells).slice(0, 4).map(td => td.textContent.toLowerCase()).join(" ");
+        row.style.display = text.includes(input) ? "" : "none";
+      }
+    }
+  </script>
+</body>
+</html>
