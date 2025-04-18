@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>html5</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+      display: block;
+      margin: 20px auto;
+    }
+    #dropZone {
+      width: 300px;
+      height: 200px;
+      border: 2px dashed gray;
+      border-radius: 10px;
+      text-align: center;
+      line-height: 200px;
+      margin: 20px auto;
+    }
+    #dragItem {
+      width: 100px;
+      height: 100px;
+      cursor: grab;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body onload="myFunction()">
+
+  <h1>html5</h1>
+
+  
+  <h2>SessionStorage (oldalbetöltések számlálása)</h2>
+  <p id="hits"></p>
+  <p>Frissítsd az oldalt a számláló növeléséhez.</p>
+
+  
+  <h2>Szálblokkolás demonstráció</h2>
+  <input type="button" onclick="bigLoop();" value="Big Loop">
+  <input type="button" onclick="sayHello();" value="Say Hello">
+
+  
+  <h2>Helymeghatározás (Geolocation)</h2>
+  <p>Kattints a gombra a pozíciód megjelenítéséhez:</p>
+  <button onclick="getLocation()">Hely meghatározása</button>
+  <p id="demo">Várakozás...</p>
+  <p id="content-holder">Google maps: Vár GPS koordinátákra ...</p>
+
+  
+  <h2>Drag and Drop (Elem áthúzása)</h2>
+  <img id="dragItem" src="https://via.placeholder.com/100" draggable="true" alt="Drag me">
+  <div id="dropZone">Ide húzd!</div>
+
+ 
+  <h2>Canvas: kör rajzolása</h2>
+  <canvas id="myCanvas" width="300" height="300"></canvas>
+
+  
+  <h2>Server-Sent Events (valós idejű frissítés)</h2>
+  <div id="result">Frissítések: </div>
+
+  <script>
+  
+    if (sessionStorage.hits)
+      sessionStorage.hits = Number(sessionStorage.hits) + 1;
+    else
+      sessionStorage.hits = 1;
+    document.getElementById("hits").innerText = "Oldalbetöltések ebben a munkamenetben: " + sessionStorage.hits;
+
+    
+    function bigLoop() {
+      for (let i = 0; i <= 1e7; i++) {
+        var j = i;
+      }
+      alert("Kész " + j + " iteráció után.");
+    }
+
+    function sayHello() {
+      alert("Hello, uram!");
+    }
+
+    
+    const x = document.getElementById("demo");
+    function getLocation() {
+      if (navigator.geolocation)
+        navigator.geolocation.getCurrentPosition(showPosition);
+      else
+        x.innerHTML = "A böngésző nem támogatja a helymeghatározást.";
+    }
+
+    function showPosition(position) {
+      x.innerHTML = "Szélesség: " + position.coords.latitude +
+                    "<br>Hosszúság: " + position.coords.longitude;
+      const newContent = `<iframe src="https://maps.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}&z=14&output=embed" width="600" height="450"></iframe>`;
+      document.getElementById('content-holder').innerHTML = newContent;
+    }
+
+   
+    const dragItem = document.getElementById("dragItem");
+    const dropZone = document.getElementById("dropZone");
+
+    dragItem.addEventListener("dragstart", function (e) {
+      e.dataTransfer.setData("text/plain", e.target.id);
+    });
+
+    dropZone.addEventListener("dragover", function (e) {
+      e.preventDefault();
+    });
+
+    dropZone.addEventListener("drop", function (e) {
+      e.preventDefault();
+      const data = e.dataTransfer.getData("text/plain");
+      const draggedElement = document.getElementById(data);
+      dropZone.innerHTML = "";
+      dropZone.appendChild(draggedElement);
+    });
+
+    
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(150, 150, 80, 0, 2 * Math.PI);
+    ctx.fillStyle = "#3498db";
+    ctx.fill();
+    ctx.stroke();
+
+    
+    if (typeof (EventSource) !== "undefined") {
+      const source = new EventSource("demo_sse.php");
+      source.onmessage = function (event) {
+        document.getElementById("result").innerHTML += event.data + "<br>";
+      };
+    } else {
+      document.getElementById("result").innerHTML = "A böngésződ nem támogatja az SSE-t.";
+    }
+  </script>
+
+<h2>SVG alakzatok</h2>
+
+<svg width="300" height="200" style="border:1px solid #ccc">
+ 
+  <circle cx="60" cy="60" r="40" fill="#3498db" stroke="black" stroke-width="2" />
+
+  
+  <rect x="130" y="30" width="80" height="60" fill="#2ecc71" stroke="#000" stroke-width="2"/>
+
+ 
+  <text x="50" y="150" font-size="20" fill="#e74c3c">Helló SVG!</text>
+</svg>
+
+
+</body>
+</html>
