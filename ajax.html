@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>AJAX CRUD alkalmazás</title>
+</head>
+<body>
+  <h1>AJAX CRUD</h1>
+
+  <h2>Read adatok</h2>
+  <button onclick="loadData()">Adatok betöltése</button>
+  <div id="data"></div>
+  <div id="stats"></div>
+
+  <h2>Create</h2>
+  <input id="create-name" placeholder="Név">
+  <input id="create-height" placeholder="Magasság">
+  <button onclick="createData()">Hozzáadás</button>
+  <div id="create-msg"></div>
+
+  <h2>Update</h2>
+  <input id="update-id" placeholder="ID">
+  <button onclick="getDataForId()">getDataForId</button><br>
+  <input id="update-name" placeholder="Új név">
+  <input id="update-height" placeholder="Új magasság">
+  <button onclick="updateData()">Frissítés</button>
+  <div id="update-msg"></div>
+
+  <h2>Delete</h2>
+  <input id="delete-id" placeholder="ID">
+  <button onclick="deleteData()">Törlés</button>
+  <div id="delete-msg"></div>
+
+  <script src="ajax.js"></script>
+</body>
+</html>

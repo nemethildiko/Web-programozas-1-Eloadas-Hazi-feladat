@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Állatkert - OOJS</title>
+  <style>
+    .card {
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 10px;
+      max-width: 200px;
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  // Alap osztály: Állat
+  class Animal {
+    constructor(name, species) {
+      this.name = name;
+      this.species = species;
+    }
+
+    describe() {
+      return `${this.name} egy ${this.species}.`;
+    }
+
+    render() {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.textContent = this.describe();
+      document.body.appendChild(div);
+    }
+  }
+
+  // Leszármazott osztály: Madár
+  class Bird extends Animal {
+    constructor(name, canFly) {
+      super(name, 'madár');
+      this.canFly = canFly;
+    }
+
+    describe() {
+      let flyText = this.canFly ? 'tud repülni' : 'nem tud repülni';
+      return `${super.describe()} Ez a madár ${flyText}.`;
+    }
+  }
+
+  // Példányosítás és megjelenítés
+  const allatok = [
+    new Animal('Buksi', 'kutya'),
+    new Animal('Morzsi', 'macska'),
+    new Bird('Tihamér', true),
+    new Bird('Lóri', false)
+  ];
+
+  allatok.forEach(allat => {
+    allat.render();
+  });
+
+</script>
+
+</body>
+</html>

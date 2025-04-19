@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>React SPA – Kalkulátor & Tic-Tac-Toe</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>React SPA – Válassz alkalmazást</h1>
+  <button onclick="setView('calc')"> Kalkulátor</button>
+  <button onclick="setView('game')"> Tic-Tac-Toe</button>
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+  
+    function Calculator() {
+      const [input, setInput] = useState("");
+      const handleClick = (val) => setInput(prev => prev + val);
+      const calculate = () => {
+        try {
+          setInput(eval(input).toString());
+        } catch {
+          setInput("Hiba");
+        }
+      };
+      const clear = () => setInput("");
+
+      return (
+        <div>
+          <h2>Kalkulátor</h2>
+          <div>{input || "0"}</div>
+          <div>
+            {[1,2,3,4,5,6,7,8,9,0,"+","-","*","/"].map(val => (
+              <button key={val} onClick={() => handleClick(val.toString())}>{val}</button>
+            ))}
+            <button onClick={calculate}>=</button>
+            <button onClick={clear}>C</button>
+          </div>
+        </div>
+      );
+    }
+
+    
+    function TicTacToe() {
+      const [squares, setSquares] = useState(Array(9).fill(null));
+      const [xIsNext, setXIsNext] = useState(true);
+
+      const handleClick = (i) => {
+        if (squares[i] || calculateWinner(squares)) return;
+        const newSquares = squares.slice();
+        newSquares[i] = xIsNext ? "X" : "O";
+        setSquares(newSquares);
+        setXIsNext(!xIsNext);
+      };
+
+      const winner = calculateWinner(squares);
+      const status = winner ? `Győztes: ${winner}` : `Következő: ${xIsNext ? "X" : "O"}`;
+
+      return (
+        <div>
+          <h2>Tic-Tac-Toe</h2>
+          <div>{status}</div>
+          <div style={{display: "grid", gridTemplateColumns: "repeat(3, 60px)"}}>
+            {squares.map((val, i) => (
+              <button key={i} onClick={() => handleClick(i)} style={{width: "60px", height: "60px", fontSize: "20px"}}>
+                {val}
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function calculateWinner(squares) {
+      const lines = [
+        [0,1,2],[3,4,5],[6,7,8], 
+        [0,3,6],[1,4,7],[2,5,8], 
+        [0,4,8],[2,4,6] 
+      ];
+      for (let [a, b, c] of lines) {
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+          return squares[a];
+        }
+      }
+      return null;
+    }
+
+  
+    function setView(view) {
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      if (view === 'calc') {
+        root.render(<Calculator />);
+      } else if (view === 'game') {
+        root.render(<TicTacToe />);
+      }
+    }
+  </script>
+</body>
+</html>

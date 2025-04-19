@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Chart.js Táblázat</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    td, th {
+      border: 1px solid black;
+      padding: 8px;
+      cursor: pointer;
+      text-align: center;
+    }
+    tr:hover {
+      background-color: #eef;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Válassz ki egy sort a diagramhoz:</h2>
+
+<table id="dataTable">
+  <tbody>
+    <!-- A JavaScript generálja a táblázatot -->
+  </tbody>
+</table>
+
+<canvas id="lineChart" width="400" height="200"></canvas>
+
+<script>
+  const table = document.getElementById("dataTable").getElementsByTagName("tbody")[0];
+
+  // Generáljunk egy 5x5-ös mátrixot véletlenszerű számokkal
+  const rows = 5;
+  const cols = 5;
+  let dataMatrix = [];
+
+  for (let i = 0; i < rows; i++) {
+    let row = [];
+    let tr = document.createElement("tr");
+    for (let j = 0; j < cols; j++) {
+      const num = Math.floor(Math.random() * 100); // 0-99
+      row.push(num);
+      let td = document.createElement("td");
+      td.textContent = num;
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+    dataMatrix.push(row);
+  }
+
+  // Chart inicializálása
+  const ctx = document.getElementById('lineChart').getContext('2d');
+  let chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ["1", "2", "3", "4", "5"],
+      datasets: [{
+        label: 'Kiválasztott sor adatai',
+        data: [],
+        borderColor: 'blue',
+        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Sorok eseménykezelése
+  Array.from(table.rows).forEach((rowElement, index) => {
+    rowElement.addEventListener("click", () => {
+      const rowData = dataMatrix[index];
+      chart.data.datasets[0].data = rowData;
+      chart.update();
+    });
+  });
+</script>
+
+</body>
+</html>
