@@ -26,7 +26,7 @@
 
 <table id="dataTable">
   <tbody>
-    <!-- A JavaScript generálja a táblázatot -->
+   
   </tbody>
 </table>
 
@@ -35,7 +35,7 @@
 <script>
   const table = document.getElementById("dataTable").getElementsByTagName("tbody")[0];
 
-  // Generáljunk egy 5x5-ös mátrixot véletlenszerű számokkal
+  
   const rows = 5;
   const cols = 5;
   let dataMatrix = [];
@@ -44,7 +44,7 @@
     let row = [];
     let tr = document.createElement("tr");
     for (let j = 0; j < cols; j++) {
-      const num = Math.floor(Math.random() * 100); // 0-99
+      const num = Math.floor(Math.random() * 100); 
       row.push(num);
       let td = document.createElement("td");
       td.textContent = num;
@@ -54,7 +54,7 @@
     dataMatrix.push(row);
   }
 
-  // Chart inicializálása
+  
   const ctx = document.getElementById('lineChart').getContext('2d');
   let chart = new Chart(ctx, {
     type: 'line',
@@ -78,7 +78,7 @@
     }
   });
 
-  // Sorok eseménykezelése
+
   Array.from(table.rows).forEach((rowElement, index) => {
     rowElement.addEventListener("click", () => {
       const rowData = dataMatrix[index];
